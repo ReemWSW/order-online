@@ -1,3 +1,29 @@
+<?php
+include 'db.php';
+session_start();
+
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM admin WHERE username='$username'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        if ($user['password']) {
+            $_SESSION['username'] = $user['username'];
+            header("Location: index.php");
+            exit();
+        } else {
+            echo "Invalid password.";
+        }
+    } else {
+        echo "No user found.";
+    }
+}
+?>
+
 <html>
 
 <head>
@@ -12,16 +38,16 @@
             <div class=" card col-md-4 ">
                 <div class=" card-body">
                     <h2 class="card-title text-center">เข้าสู่ระบบ</h2>
-                    <form>
+                    <form action="login.php" method="POST">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" for="username" class="form-control" placeholder="กรุณาใส่ username" required>
+                            <input type="text" name="username" for="username" class="form-control" placeholder="กรุณาใส่ username" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" for="password" class="form-control" placeholder="กรุณาใส่ password" required>
+                            <input type="password" name="password" for="password" class="form-control" placeholder="กรุณาใส่ password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary ">เข้าสู่ระบบ</button>
+                        <button name="login" type="submit" class="btn btn-primary ">เข้าสู่ระบบ</button>
                     </form>
                     <div class="text-center">
                         <a href="register.php">สมัครสมาชิก</a>
