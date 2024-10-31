@@ -1,44 +1,43 @@
 <?php
-include 'db.php';
 session_start();
 
-if (isset($_POST['login'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $sql = "SELECT * FROM admin WHERE username='$username'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if ($user['password']) {
-            $_SESSION['username'] = $user['username'];
-            header("Location: index.php");
-            exit();
-        } else {
-            echo "Invalid password.";
-        }
-    } else {
-        echo "No user found.";
-    }
+if (isset($_GET['role'])) {
+    $_SESSION['role'] = $_GET['role'];
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>เข้าสู่ระบบ</title>
-    <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
-
+<body class="bg-light">
+    <?php
+    if (isset($_GET['loginsuccess']) && $_GET['loginsuccess'] == "false") {
+        echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Warning!</strong> Invalid Credentials
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span></button>
+                </div>';
+    }
+    ?>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class=" card col-md-4 ">
                 <div class=" card-body">
                     <h2 class="card-title text-center">เข้าสู่ระบบ</h2>
-                    <form action="login.php" method="POST">
+                    <?php
+                    if (isset($_SESSION['alert'])) {
+                        echo "<div class='alert alert-{$_SESSION['alert']['type']} alert-dismissible fade show' role='alert'>
+                    {$_SESSION['alert']['message']}
+                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>";
+                        unset($_SESSION['alert']);
+                    }
+                    ?>
+                    <form action="auth.php?action=login" method="POST">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" name="username" for="username" class="form-control" placeholder="กรุณาใส่ username" required>
@@ -56,8 +55,7 @@ if (isset($_POST['login'])) {
             </div>
         </div>
 
-    </div>
-    <script src="bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
+        <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
